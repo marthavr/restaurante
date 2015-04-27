@@ -1,0 +1,668 @@
+﻿<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        
+        <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
+<script src="js/jquery.min.js"></script>
+<script src="js/jquery.mobile-1.4.5.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function inicio(){
+       
+     
+     var btnGuardar=$("#guardar");
+     btnGuardar.click(function guardar(){
+         var descripcion=$("#descripcion").val();
+         var precio=$("#precio").val();
+         var cantidad=$("#cantidad").val();
+          if (descripcion=="" || precio==""|| precio=="" || cantidad=="") {
+                    alert("¡¡¡¡LLENE LOS CAMPOS!!!!");
+                }
+                else{
+         $.ajax({
+             type:"POST",
+             url:"http://martha13valadez.260mb.net/guardarDatos.php",
+             data:"descripcion="+descripcion+"&precio="+precio+"&cantidad="+cantidad,
+             success:registro
+             
+         });
+                }
+    function registro(datos){
+        alert(datos);
+    }
+     });
+     var btnConsulta=$("#consultar");//kkdhgfffd
+     btnConsulta.click(function cons(){
+         $.ajax({
+             type:"POST",
+             url:"http://martha13valadez.260mb.net/consultaBD.php",
+             data:"",
+             success:consultaDatos
+         });
+         function consultaDatos(datos){
+             var respDatos=$.parseJSON(datos);
+             //alert(datos);
+              var respuesta=$("#resconsulta");
+              dibujarTabla(respuesta,respDatos);
+              
+         }
+         
+     });
+     function dibujarTabla(respuesta,respDatos){
+     respuesta.html("");
+              respuesta.append('<table id="tab" border="4">');
+              var tabla=$("#tab");
+              tabla.html("<tr><th> Id_desayuno</th><th>Descripcion</th><th>Precio</th><th>Cantidad</th></tr>");
+              for(var i in respDatos){
+                  tabla.append("<tr><td>"+respDatos[i].Id_desayuno+"</td>"
+                 +"<td>"+respDatos[i].Descripcion+"</td>"
+                 +"<td>"+respDatos[i].Precio+"</td>"
+                  +"<td>"+respDatos[i].Cantidad+"</td></tr>");
+              }
+              tabla.append("</table>");
+          }
+     
+     var consultar2=$("#consultar2");
+     consultar2.click(function cons2(){
+      var valConsulta=$("#valConsulta").val();
+      $.ajax({
+          type:"POST",
+          url:"http://martha13valadez.260mb.net/consultaBD2.php",
+          data:"Id="+valConsulta,
+          success:consultaDesayuno
+          
+      });
+        function consultaDesayuno(datos){
+             var respDatos2=$.parseJSON(datos);
+             //alert(datos);
+              var respuesta2=$("#resconsulta2");
+              dibujarTabla(respuesta2,respDatos2);
+              
+        } 
+     });
+    var btnConAct=$("#btnConAct");
+    btnConAct.click(function cargarDat(){
+     $.ajax({
+             type:"POST",
+             url:"http://martha13valadez.260mb.net/consultaBD.php",
+             data:"",
+             success:cargarDatos
+         }); 
+         function cargarDatos(datos){
+             var respCarga=$.parseJSON(datos);
+             var respConAct=$("#respConAct");
+             dibujarTabla(respConAct,respCarga);
+         }
+    });
+     var btnCarDatos=$("#btnCarDatos");
+     btnCarDatos.click(function cargarInf(){
+         var Id=parseInt($("#nomActualizar").val());
+         $.ajax({
+             type:"POST",
+             url:"http://martha13valadez.260mb.net/consultaBD2.php",
+             data:"Id="+Id,
+             success:cargarDatosAct
+             
+         });
+         function cargarDatosAct(datos){
+             var consDatAct=$.parseJSON(datos);
+             var respCargDatos=$("#respCargDatos");
+             respCargDatos.html("<label>ID:</label><input type='text' id='Id' disabled='yes'>");
+             respCargDatos.append("<label>Descripcion:</label><input type='text' id='des'>");
+             respCargDatos.append("<label>Precio:</label><input type='text' id='pre'>");
+             respCargDatos.append("<label>Cantidad:</label><input type='text' id='can'>");
+             var Id=$("#Id");
+             var des=$("#des");
+             var pre=$("#pre");
+             var can=$("#can");
+             for(var i in consDatAct){
+                 Id.val(consDatAct[i].Id_desayuno);
+                 des.val(consDatAct[i].Descripcion);
+                  pre.val(consDatAct[i].Precio);
+                  can.val(consDatAct[i].Cantidad);
+             }
+         }
+     });
+     //quitar
+     
+     
+var btnGuarDatos=$("#btnGuarDatos");
+            btnGuarDatos.click(function actual(){
+                var id=parseInt($("#Id").val());
+                var descripcion=$("#des").val();
+                var precio=$("#pre").val();
+                var cantidad=$("#can").val();
+                if (descripcion=="" || precio==""|| precio=="" || cantidad=="") {
+                    alert("¡¡¡¡LLENE LOS CAMPOS!!!!");
+                }
+                else{
+                    $.ajax({
+                        type:"POST",
+                        url:"http://martha13valadez.260mb.net/actualizar.php",
+                        data:"id="+id+"&descripcion="+descripcion+"&precio="+precio+"&cantidad="+cantidad,
+                        success:actualizacion
+                    });
+                    }
+                     function actualizacion(datos){
+                        alert("datos:"+datos);
+                }
+                });
+                var btnConEliminar=$("#btnConEliminar");
+                btnConEliminar.click(function conEliminar(){
+                    $.ajax({
+                        type:"POST",
+                        url:"http://martha13valadez.260mb.net/consultaBD.php",
+                        data:"",
+                        success:consultaAntEliminar
+                    
+                });
+                function consultaAntEliminar(datos){
+                    var datAntEliminar=$.parseJSON(datos);
+                    var respConElim=$("#respConElim");
+                    dibujarTabla(respConElim,datAntEliminar);
+                }
+                });
+                var btnEliminar=$("#btnEliminar");
+                btnEliminar.click(function eliminarDato(){
+                var idEliminar=parseInt($("#idEliminar").val());
+                $.ajax({
+                        type:"POST",
+                        url:"http://martha13valadez.260mb.net/eliminarDatos.php",
+                        data:"id="+idEliminar,
+                        success:Eliminacion
+                });
+                function Eliminacion(datos){
+                    alert(datos);
+                    
+                }
+                });
+ //*******************************SEGUNDA TABLA*****************
+                $(document).ready(function inicio(){
+       
+     
+     var btnGuardarC=$("#guardarC");
+     btnGuardarC.click(function guardarC(){
+         var descripcion2=$("#descripcion2").val();
+         var precio2=$("#precio2").val();
+         var cantidad2=$("#cantidad2").val();
+          if (descripcion2=="" || precio2=="" || cantidad2=="") {
+                    alert("¡¡¡¡LLENE LOS CAMPOS!!!! ");
+                }
+                else{
+         $.ajax({
+             type:"POST",
+             url:"http://martha13valadez.260mb.net/guardarDatosC.php",
+             data:"descripcion="+descripcion2+"&precio="+precio2+"&cantidad="+cantidad2,
+             success:registro2
+             
+         });
+                }
+    function registro2(datos){
+        alert(datos);
+    }
+     });
+     var btnConsulta=$("#consultarC");//kkdhgfffd
+     btnConsulta.click(function cons(){
+         $.ajax({
+             type:"POST",
+             url:"http://martha13valadez.260mb.net/consultaBDC.php",
+             data:"",
+             success:consultaDatos
+         });
+         function consultaDatos(datos){
+             var respDatos=$.parseJSON(datos);
+             //alert(datos);
+              var respuesta=$("#resconsultaC");
+              dibujarTabla(respuesta,respDatos);
+              
+         }
+         
+     });
+     function dibujarTabla(respuesta,respDatos){
+     respuesta.html("");
+              respuesta.append('<table id="tab" border="5" color="red"> ');
+              var tabla=$("#tab");
+              tabla.html("<tr><th> Id_comida</th><th>Descripcion</th><th>Precio</th><th>Cantidad</th></tr>");
+              for(var i in respDatos){
+                  tabla.append("<tr><td>"+respDatos[i].Id_comida+"</td>"
+                 +"<td>"+respDatos[i].Descripcion+"</td>"
+                 +"<td>"+respDatos[i].Precio+"</td>"
+                  +"<td>"+respDatos[i].Cantidad+"</td></tr>");
+              }
+              tabla.append("</table>");
+          }
+     
+     var consultar2=$("#consultar2C");
+     consultar2.click(function cons2(){
+      var valConsulta=$("#valConsultaC").val();
+      $.ajax({
+          type:"POST",
+          url:"http://martha13valadez.260mb.net/consultaBD2C.php",
+          data:"Id="+valConsulta,
+          success:consultaComida
+          
+      });
+        function consultaComida(datos){
+             var respDatos2=$.parseJSON(datos);
+             //alert(datos);
+              var respuesta2=$("#resconsulta2C");
+              dibujarTabla(respuesta2,respDatos2);
+              
+        } 
+     });
+    var btnConAct=$("#btnConActC");
+    btnConAct.click(function cargarDat(){
+     $.ajax({
+             type:"POST",
+             url:"http://martha13valadez.260mb.net/consultaBDC.php",
+             data:"",
+             success:cargarDatos
+         }); 
+         function cargarDatos(datos){
+             var respCarga=$.parseJSON(datos);
+             var respConAct=$("#respConActC");
+             dibujarTabla(respConAct,respCarga);
+         }
+    });
+     var btnCarDatos=$("#btnCarDatosC");
+     btnCarDatos.click(function cargarInf2(){
+         var Id=parseInt($("#nomActualizarC").val());
+         $.ajax({
+             type:"POST",
+             url:"http://martha13valadez.260mb.net/consultaBD2C.php",
+             data:"Id="+Id,
+             success:cargarDatosAct
+             
+         });
+         function cargarDatosAct(datos){
+             var consDatAct=$.parseJSON(datos);
+             var respCargDatos=$("#respCargDatosC");
+             respCargDatos.html("<label>ID:</label><input type='text' id='Id' disabled='yes'>");
+             respCargDatos.append("<label>Descripcion:</label><input type='text' id='des'>");
+             respCargDatos.append("<label>Precio:</label><input type='text' id='pre'>");
+             respCargDatos.append("<label>Cantidad:</label><input type='text' id='can'>");
+             var Id=$("#Id");
+             var des=$("#des");
+             var pre=$("#pre");
+             var can=$("#can");
+             for(var i in consDatAct){
+                 Id.val(consDatAct[i].Id_comida);
+                 des.val(consDatAct[i].Descripcion);
+                  pre.val(consDatAct[i].Precio);
+                  can.val(consDatAct[i].Cantidad);
+             }
+         }
+     });
+     //quitar
+     
+     
+var btnGuarDatos=$("#btnGuarDatosC");
+            btnGuarDatos.click(function actual(){
+                var id=parseInt($("#Id").val());
+                var descripcion2=$("#des").val();
+                var precio2=$("#pre").val();
+                var cantidad2=$("#can").val();
+                if (descripcion2=="" || precio2=="" || precio2=="" || cantidad2=="") {
+                    alert("¡¡¡¡LLENE LOS CAMPOS!!!! ");
+                }
+                else{
+                    $.ajax({
+                        type:"POST",
+                        url:"http://martha13valadez.260mb.net/actualizarC.php",
+                        data:"id="+id+"&descripcion="+descripcion2+"&precio="+precio2+"&cantidad="+cantidad2,
+                        success:actualizacion2
+                    });
+                    }
+                     function actualizacion2(datos){
+                        alert("datos:"+datos);
+                }
+                });
+                var btnConEliminarC=$("#btnConEliminarC");
+                btnConEliminarC.click(function conEliminar(){
+                    $.ajax({
+                        type:"POST",
+                        url:"http://martha13valadez.260mb.net/consultaBDC.php",
+                        data:"",
+                        success:consultaAntEliminar
+                    
+                });
+                function consultaAntEliminar(datos){
+                    var datAntEliminar=$.parseJSON(datos);
+                    var respConElim=$("#respConElimC");
+                    dibujarTabla(respConElim,datAntEliminar);
+                }
+                });
+                var btnEliminar=$("#btnEliminarC");
+                btnEliminar.click(function eliminarDato(){
+                var idEliminar=parseInt($("#idEliminarC").val());
+                $.ajax({
+                        type:"POST",
+                        url:"http://martha13valadez.260mb.net/eliminarDatosC.php",
+                        data:"id="+idEliminar,
+                        success:Eliminacion
+                });
+                function Eliminacion(datos){
+                    alert(datos);
+                    
+                }
+                });
+                
+                
+                 });
+                
+        });
+</script>
+<style>
+    p{
+        text-align: center;
+        color: orangered;
+      
+    }
+    
+    li{
+        background: yellow;
+         border: 6px solid violet;
+    }
+    label{
+        border: 6px solid greenyellow;
+        background-color: cyan;
+    }
+    input{
+        border: 6px solid yellow;
+       
+    }
+   
+</style>
+
+    </head>
+    <body>
+        <div data-role="page" id="Pagina2" >
+             <div data-role="header">
+                <p>****~~~ BIENVENIDO A RESTAURANTE MAR~~~****
+                </p>
+            </div>
+            <div data-role="content">
+                <div>
+                    <ul data-role="listview">
+                        <li><a href="#desayunos">DESAYUNOS</a></li>
+                        <li><a href="#comidas">COMIDAS</a></li>
+                        
+                    </ul>
+                </div>
+                </div>
+            <div data-role="footer">
+                <p>****~~~RESTAURANTE MAR~~~****</p>
+                
+                <img src="images/res.jpg" border="15" width="250" height="250">
+<p>Martha Valadez Romero</p>
+            </div>
+            </div>
+
+        
+        
+        <!----->
+        
+        <div data-role="page" id="desayunos" >
+            <div data-role="header">
+                <p>****~~~ BIENVENIDO A RESTAURANTE MAR~~~****
+                </p>
+            </div>
+            <div data-role="content">
+                <div>
+                    <ul data-role="listview">
+                        <li><a href="#registro">Registrar</a></li>
+                        <li><a href="#consulta">Consultar todo</a></li>
+                        <li><a href="#consulta2">Consultar uno</a></li>
+                         <li><a href="#actualizar">Actualizar Dato</a></li>
+                         <li><a href="#eliminar">Eliminar Dato</a></li>
+                    </ul>
+                </div>
+                </div>
+            <div data-role="footer">
+                <p>~~DISFRUTA LAS DELICIAS~~</p>
+                
+            </div>
+            </div>
+        <div data-role="page" id="registro" >
+            <div data-role="header">
+                <p>REGISTRAR VENTAS DE DESAYUNOS
+                </p>
+            </div>
+            <div data-role="content">
+                <label for="descripcion">Descripción: </label>
+                <input type="text" id="descripcion">
+                
+                <label for="precio">Precio: </label>
+                <input type="text" id="precio">
+                
+                <label for="cantidad">Cantidad: </label>
+                <input type="text" id="cantidad">
+                <p></p>
+                
+                <input type="button" id="guardar" value="guardar">
+            </div>
+            <div data-role="footer">
+                <p>~~DISFRUTA LAS DELICIAS~~</p>
+                
+            </div>
+        </div>
+        <!--CONSULTA TODOS---->
+         <div data-role="page" id="consulta" >
+            <div data-role="header">
+                <p>CONSULTAR TODAS  LAS VENTAS DE DESAYUNOS
+                </p>
+            </div>
+            <div data-role="content">
+             
+                
+                <input type="button" id="consultar" value="consultar">
+                <div id="resconsulta"> </div>
+            </div>
+            <div data-role="footer">
+                <p>~~DISFRUTA LAS DELICIAS~~</p>
+                
+            </div>
+             </div>
+             
+        <!--CONSULTAR UNO--->
+               <div data-role="page" id="consulta2" >
+            <div data-role="header">
+                <p>CONSULTAR VENTA ESPECIFICA DE DESAYUNOS
+                </p>
+            </div>
+            <div data-role="content">
+                <label for="valConsulta" id="label">ID DE DESAYUNO:</label>
+                <input type="text" id="valConsulta">
+                
+                <input type="button" id="consultar2" value="consultar">
+                <div id="resconsulta2"> </div>
+            </div>
+            <div data-role="footer">
+                <p>~~DISFRUTA LAS DELICIAS~~</p>
+                
+            </div>
+                   
+               </div>
+             <!--ACTUALIZAR--->
+                   
+         <div data-role="page" id="actualizar" >
+            <div data-role="header">
+                <p>ACTUALIZAR VENTA DE DESAYUNO
+                </p>
+            </div>
+            <div data-role="content">
+                <input type="button" id="btnConAct" value="Mostrar todos los registros todo">
+                <div id="respConAct"></div>
+                <p></p>
+                <label for="nomActualizar">ID DE DESAYUNO A ACTUALIZAR:</label>
+                <input type="text" id="nomActualizar">
+                <input type="button" id="btnCarDatos" value="Cargar Datos">
+                <div id="respCargDatos"></div>
+                <input type="button" id="btnGuarDatos" value="Guadar Datos">
+                        </div>
+            <div data-role="footer">
+                <p>~~DISFRUTA LAS DELICIAS~~</p>
+            </div>
+            </div>
+                <!--ELIMINAR-->
+                <div data-role="page" id="eliminar" >
+            <div data-role="header">
+                <p>ELIMINAR VENTA
+                </p>
+            </div>
+            <div data-role="content">
+                <input type="button" id="btnConEliminar" value="Mostrar todos los registros todo">
+                <div id="respConElim"></div>
+                <p></p>
+                <label for="idEliminar">ID DE DESAYUNO A ELIMINAR:</label>
+                <input type="text" id="idEliminar">
+               
+                <input type="button" id="btnEliminar" value="Eliminar Registro">
+                  </div>    
+            <div data-role="footer">
+                <p>~~DISFRUTA LAS DELICIAS~~</p>
+            </div>
+                    
+            </div>
+                
+                
+ 
+                <!------menu2-------> 
+                
+                <div data-role="page" id="comidas" >
+            <div data-role="header">
+                <p>****~~~ BIENVENIDO A RESTAURANTE MAR~~~****
+                </p>
+            </div>
+            <div data-role="content">
+                <div>
+                    <ul data-role="listview">
+                        <li><a href="#registroC">Registrar</a></li>
+                        <li><a href="#consultaC">Consultar todo</a></li>
+                        <li><a href="#consulta2C">Consultar uno</a></li>
+                         <li><a href="#actualizarC">Actualizar Dato</a></li>
+                         <li><a href="#eliminarC">Eliminar Dato</a></li>
+                    </ul>
+                </div>
+                </div>
+            <div data-role="footer">
+                <p>~~DISFRUTA LAS DELICIAS~~</p>
+                
+            </div>
+            </div>
+        <div data-role="page" id="registroC" >
+            <div data-role="header">
+                <p>REGISTRO DE VENTAS DE COMIDAS
+                </p>
+            </div>
+            <div data-role="content">
+                <label for="descripcion2">Descripcion: </label>
+                <input type="text" id="descripcion2">
+                
+                <label for="precio2">Precio: </label>
+                <input type="text" id="precio2">
+                
+                <label for="cantidad2">Cantidad: </label>
+                <input type="text" id="cantidad2">
+                <p></p>
+                
+                <input type="button" id="guardarC" value="guardar">
+            </div>
+            <div data-role="footer">
+                <p>~~DISFRUTA LAS DELICIAS~~</p>
+         </div>
+                    
+            </div>
+                 <!--CONSULTA TODOS---->
+         <div data-role="page" id="consultaC" >
+            <div data-role="header">
+                <p>CONSULTA DE TODAS LAS VENTAS DE COMIDAS
+                </p>
+            </div>
+            <div data-role="content">
+             
+                
+                <input type="button" id="consultarC" value="consultar">
+                <div id="resconsultaC"> </div>
+            </div>
+            <div data-role="footer">
+                <p>~~DISFRUTA LAS DELICIAS~~</p>
+                
+            </div>
+             </div>
+             
+        <!--CONSULTAR UNO--->
+               <div data-role="page" id="consulta2C" >
+            <div data-role="header">
+                <p>CONSULTA DE COMIDA ESPECIFICA
+                </p>
+            </div>
+            <div data-role="content">
+                <label for="valConsulta" id="label">ID DE COMIDA:</label>
+                <input type="text" id="valConsultaC">
+                
+                <input type="button" id="consultar2C" value="consultar">
+                <div id="resconsulta2C"> </div>
+            </div>
+            <div data-role="footer">
+                <p>~~DISFRUTA LAS DELICIAS~~</p>
+                
+            </div>
+                   
+               </div>
+             <!--ACTUALIZAR--->
+                   
+         <div data-role="page" id="actualizarC" >
+            <div data-role="header">
+                <p>ACTUALIZAR VENTA DE COMIDA
+                </p>
+            </div>
+            <div data-role="content">
+                <input type="button" id="btnConActC" value="Mostrar todos los registros ">
+                <div id="respConActC"></div>
+                <p></p>
+                <label for="nomActualizarC">ID DE COMIDA A ACTUALIZAR:</label>
+                <input type="text" id="nomActualizarC">
+                
+                <input type="button" id="btnCarDatosC" value="Cargar Datos">
+                <div id="respCargDatosC"></div>
+                <input type="button" id="btnGuarDatosC" value="Guadar Datos">
+                        </div>
+            <div data-role="footer">
+                <p>~~DISFRUTA LAS DELICIAS~~</p>
+            </div>
+            </div>
+                <!--ELIMINAR-->
+                <div data-role="page" id="eliminarC" >
+            <div data-role="header">
+                <p>ELIMINAR VENTA DE  COMIDA
+                </p>
+            </div>
+            <div data-role="content">
+                <input type="button" id="btnConEliminarC" value="Mostrar todos los registros ">
+                <div id="respConElimC"></div>
+                <p></p>
+                <label for="idEliminar">ID DE COMIDA A ELIMINAR:</label>
+                <input type="text" id="idEliminarC">
+               
+                <input type="button" id="btnEliminarC" value="Eliminar Registro">
+                  </div>    
+            <div data-role="footer">
+                <p>~~DISFRUTA LAS DELICIAS~~</p>
+            </div>
+                    
+            </div>
+                
+
+                
+            
+    </body>
+</html>
